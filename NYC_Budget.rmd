@@ -127,12 +127,17 @@ fetch_acs_pop <- function(year) {
     )
   
   resp <- req_perform(req)
-  dat <- resp_body_json(resp, simplifyVector = TRUE)
-  
-  # First row is headers; second row is data
+  dat <- resp_body_json(resp, simplifyVector = FALSE)
+
+  # Census API returns a JSON array where row 1 is headers and row 2 is data.
+  # Parse defensively so we do not depend on matrix dimnames.
+  header <- unlist(dat[[1]], use.names = FALSE)
+  values <- unlist(dat[[2]], use.names = FALSE)
+  row <- stats::setNames(as.list(values), header)
+
   tibble(
     year = year,
-    population = as.numeric(dat[2, "B01003_001E"])
+    population = as.numeric(row[["B01003_001E"]])
   )
 }
 

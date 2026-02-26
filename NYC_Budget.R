@@ -65,7 +65,7 @@ fred_cpi_url <- "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCSL"
 cpi_raw <- readr::read_csv(fred_cpi_url, show_col_types = FALSE) %>%
   rename_with(tolower) %>%
   rename(cpi = cpiaucsl) %>%
-  mutate(date = as.Date(date))
+  mutate(date = as.Date(.data$date))
 
 # Convert each month to NYC fiscal year (FY runs Jul 1 – Jun 30; e.g., Aug 2021 is FY2022)
 cpi_fy <- cpi_raw %>%

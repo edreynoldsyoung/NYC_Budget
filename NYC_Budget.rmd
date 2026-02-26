@@ -146,12 +146,14 @@ years_needed <- sort(unique(budget$fiscal_year))
 # You can choose fiscal_year-1 instead if you prefer a "mid-FY" approximation.
 acs_years <- years_needed
 acs_years <- acs_years[acs_years >= 2005]  # ACS1 availability constraint
+acs_years <- setdiff(acs_years, 2020)
+
 
 pop <- map_dfr(acs_years, fetch_acs_pop) %>%
   rename(fiscal_year = year)
 ```
 
-```{r plot, include=FALSE}
+```{r combine, include=FALSE}
 # ----------------------------
 # 4) Combine -> real per capita -> plot
 # ----------------------------
@@ -166,7 +168,9 @@ combined <- budget %>%
 
 # View the assembled table (this is your “data table” output)
 print(combined %>% select(fiscal_year, exp_nominal, cpi_fy_avg, population, exp_real_per_capita))
+```
 
+```{r plot}
 # Plot
 ggplot(combined, aes(x = fiscal_year, y = exp_real_per_capita)) +
   geom_line() +
